@@ -38,5 +38,6 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
+    'react/jsx-filename-extension': [1, {extensions: ['.js', '.jsx', '.tsx']}],
   },
 };
