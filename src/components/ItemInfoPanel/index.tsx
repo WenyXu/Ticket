@@ -4,7 +4,7 @@ import React, {useState} from 'react';
 import {Collapse} from 'antd';
 import AttributeView from '../AttributeView';
 import ObjectRender from '../ObjectRender';
-import {getGraph} from '../../graphql';
+import {getGraph} from '../../graph';
 const {Panel} = Collapse;
 
 export const ModelInfoRender = ({

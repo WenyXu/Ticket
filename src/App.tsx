@@ -8,7 +8,7 @@ import 'react-resizable/css/styles.css';
 import {Tabs, Collapse, Form, Switch, Button} from 'antd';
 import EventMonitor from './components/EventMonitor';
 import {get, set} from './utils/localStorage';
-import {getGraph, initGraph} from './graphql';
+import {getGraph, initGraph} from './graph';
 import {GraphData} from '@antv/g6/lib/types';
 import {
   data,
