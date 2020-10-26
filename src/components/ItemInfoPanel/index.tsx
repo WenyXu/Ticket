@@ -1,86 +1,153 @@
 import {Item, ITEM_TYPE, ModelConfig} from '@antv/g6/es/types';
 import {ICombo, IEdge, INode} from '@antv/g6/es/interface/item';
-import React from 'react';
+import React, {useState} from 'react';
 import {Collapse} from 'antd';
+import AttributeView from '../AttributeView';
+import ObjectRender from '../ObjectRender';
+import {getGraph} from '../../graphql';
 const {Panel} = Collapse;
 
 export const ModelInfoRender = ({
   model,
   type,
+  editable = false,
 }: {
+  editable?: boolean;
   model: ModelConfig;
   type: ITEM_TYPE;
 }) => {
+  const [_model, setModel] = useState(model);
   switch (type) {
     case 'node':
       return (
         <div>
-          <div>type:{type}</div>
-          <div>type:{model.type}</div>
-          <div>label:{model.label}</div>
-          <div>id:{model?.id}</div>
-          <div>data:{JSON.stringify(model?.data)}</div>
-          <div>x:{model.x}</div>
-          <div>y:{model.y}</div>
+          <AttributeView
+            label={'Model Type'}
+            value={_model.type}
+            disableInput
+          />
+          <AttributeView
+            label={'Model ID'}
+            value={_model?.id.toString()}
+            onChange={value => setModel({..._model, id: value})}
+            disableInput={!editable}
+          />
+          <AttributeView
+            label={'Model Label'}
+            value={_model?.label?.toString()}
+            onChange={value => setModel({..._model, label: value})}
+            disableInput={!editable}
+          />
+          <AttributeView
+            label={'Data'}
+            value={ObjectRender(_model?.data)}
+            disableInput={!editable}
+          />
+          <AttributeView
+            label={'X'}
+            value={_model?.x?.toString()}
+            onChange={value => setModel({..._model, x: value})}
+            disableInput={!editable}
+          />
+          <AttributeView
+            label={'Y'}
+            value={_model?.y?.toString()}
+            onChange={value => setModel({..._model, y: value})}
+            disableInput={!editable}
+          />
+          <button onClick={() => console.log(_model)}>submit</button>
         </div>
       );
     case 'edge':
       return (
         <div>
-          <div>type:{type}</div>
-          <div>type:{model.type}</div>
-          <div>label:{model.label}</div>
-          <div>id:{model?.id}</div>
-          <div>data:{JSON.stringify(model?.data)}</div>
-          <div>source:{model?.source}</div>
-          <div>target:{model?.target}</div>
-          <div>startPoint:{JSON.stringify(model?.startPoint)}</div>
-          <div>endPoint:{JSON.stringify(model?.endPoint)}</div>
+          <AttributeView
+            label={'Model Type'}
+            value={_model.type}
+            disableInput
+          />
+          <AttributeView
+            label={'Model ID'}
+            value={_model?.id.toString()}
+            onChange={value => setModel({..._model, id: value})}
+            disableInput={!editable}
+          />
+          <AttributeView
+            label={'Model Label'}
+            value={_model?.label?.toString()}
+            onChange={value => setModel({..._model, label: value})}
+            disableInput={!editable}
+          />
+          <AttributeView
+            label={'Data'}
+            value={ObjectRender(_model?.data)}
+            disableInput={!editable}
+          />
+
+          <AttributeView
+            label={'Source'}
+            value={_model?.source.toString()}
+            onChange={value => setModel({..._model, source: value})}
+            disableInput={!editable}
+          />
+          <AttributeView
+            label={'Target'}
+            value={_model?.target.toString()}
+            onChange={value => setModel({..._model, target: value})}
+            disableInput={!editable}
+          />
+          <AttributeView
+            label={'Start Point'}
+            value={ObjectRender(_model?.startPoint)}
+            disableInput
+          />
+          <AttributeView
+            label={'End Point'}
+            value={ObjectRender(_model?.endPoint)}
+            disableInput
+          />
         </div>
       );
     default:
       return <></>;
   }
-  return (
-    <div>
-      <div>type:{type}</div>
-      <div>type:{model.type}</div>
-      <div>label:{model.label}</div>
-      <div>id:{model?.id}</div>
-      <div>data:{JSON.stringify(model?.data)}</div>
-      <div>x:{model.x}</div>
-      <div>y:{model.y}</div>
-      <div>source:{model?.source}</div>
-      <div>target:{model?.target}</div>
-      <div>startPoint:{JSON.stringify(model?.startPoint)}</div>
-      <div>endPoint:{JSON.stringify(model?.endPoint)}</div>
-    </div>
-  );
 };
 
-export const NodeInfoPanel = ({item}: {item: INode}) => {
+export const NodeInfoPanel = ({
+  editable = false,
+  item,
+  renderEdges = true,
+}: {
+  item: INode;
+  renderEdges?: boolean;
+  editable?: boolean;
+}) => {
   const model = item.getModel();
   const inEdges: IEdge[] = item.getInEdges();
   const outEdges: IEdge[] = item.getOutEdges();
 
   return (
     <div>
-      <div>{model && <ModelInfoRender model={model} type={'node'} />}</div>
-
-      {Array.isArray(inEdges) && (
-        <Collapse defaultActiveKey={['0']} ghost>
+      <div>
+        {model && (
+          <ModelInfoRender editable={editable} model={model} type={'node'} />
+        )}
+      </div>
+      {renderEdges && Array.isArray(inEdges) && (
+        <Collapse defaultActiveKey={[]} ghost>
           {inEdges.map((e, index) => (
             <Panel header={`in:${e.getID()}`} key={index}>
-              <EdgeInfoPanel item={e} />
+              <EdgeInfoPanel editable={editable} item={e} />
             </Panel>
           ))}
         </Collapse>
       )}
-      {Array.isArray(outEdges) && (
-        <Collapse defaultActiveKey={['0']} ghost>
+
+      {renderEdges && Array.isArray(outEdges) && (
+        <Collapse defaultActiveKey={[]} ghost>
           {outEdges.map((e, index) => (
             <Panel header={`out:${e.getID()}`} key={index}>
-              <EdgeInfoPanel item={e} />
+              <EdgeInfoPanel editable={editable} item={e} />
             </Panel>
           ))}
         </Collapse>
@@ -88,11 +155,21 @@ export const NodeInfoPanel = ({item}: {item: INode}) => {
     </div>
   );
 };
-export const EdgeInfoPanel = ({item}: {item: IEdge}) => {
+export const EdgeInfoPanel = ({
+  editable = false,
+  item,
+}: {
+  editable?: boolean;
+  item: IEdge;
+}) => {
   const model = item.getModel();
   return (
     <div>
-      <div>{model && <ModelInfoRender model={model} type={'edge'} />}</div>
+      <div>
+        {model && (
+          <ModelInfoRender editable={editable} model={model} type={'edge'} />
+        )}
+      </div>
     </div>
   );
 };

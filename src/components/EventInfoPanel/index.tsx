@@ -3,6 +3,7 @@ import React from 'react';
 import {IG6GraphEvent} from '@antv/g6/es/types';
 import ItemInfoPanel from '../ItemInfoPanel';
 import {Collapse} from 'antd';
+import AttributeView from '../AttributeView';
 const {Panel} = Collapse;
 
 const EventInfoPanel = ({
@@ -12,15 +13,30 @@ const EventInfoPanel = ({
 }) => {
   return (
     <Collapse defaultActiveKey={['1']} ghost>
-      <Panel header="Event" key="1">
+      <Panel header="Click" key="1">
         <div>
-          <div>x:{x}</div>
-          <div>y:{y}</div>
-          <div>canvasX:{canvasX}</div>
-          <div>canvasY:{canvasY}</div>
-          <div>clientX:{clientX}</div>
-          <div>clientY:{clientY}</div>
-          <div>type:{type}</div>
+          <AttributeView label={'X'} value={x.toString()} disableInput />
+          <AttributeView label={'Y'} value={y.toString()} disableInput />
+          <AttributeView
+            label={'Canvas X'}
+            value={canvasX.toString()}
+            disableInput
+          />
+          <AttributeView
+            label={'Canvas Y'}
+            value={canvasY.toString()}
+            disableInput
+          />
+          <AttributeView
+            label={'Client X'}
+            value={clientX.toString()}
+            disableInput
+          />
+          <AttributeView
+            label={'Client Y'}
+            value={clientY.toString()}
+            disableInput
+          />
         </div>
         {item && (
           <Collapse defaultActiveKey={['1']} ghost>
